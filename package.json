@@ -1,0 +1,35 @@
+{
+  "name": "mx.utxj.ti.awos.bienesraices",
+  "version": "1.0.0",
+  "description": "Proyecto de Clase para la Unidad 2, de la asignatura AWOS utilizando Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KouDionicio/BienesRaices_230237.git"
+  },
+  "keywords": [
+    "MVC",
+    "Express",
+    "Sequelize",
+    "MySQL",
+    "TailwindCSS",
+    "Nodemon",
+    "NodeJS",
+    "PUG",
+    "NodeMailer",
+    "Mailtrap",
+    "JWT"
+  ],
+  "author": "Citlalli Perez Dionicio",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KouDionicio/BienesRaices_230237/issues"
+  },
+  "homepage": "https://github.com/KouDionicio/BienesRaices_230237#readme",
+  "dependencies": {
+    "express": "^4.21.1"
+  }
+}

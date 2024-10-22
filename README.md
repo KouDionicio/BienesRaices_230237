@@ -10,8 +10,10 @@ Para poder demostrar y aprender la creación y consumo de Interfaces de Programa
  |No.|Fecha|Descripción|Potenciador| Estatus| 
  |--|--|--|--|--|
  |8.|17/10/24|Repositorio del Proyecto Implementando .gitignore|1|Finalizada|
- |9.|22/10/24|Creación de uuna Aplicación Web usando Express|11|Activa|
- 
+ |9.|22/10/24|Creación de uuna Aplicación Web usando Express|12|Activa|
+
+ ### Tech Stack
+ ![NodeJS](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white) ![Express](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
  
 
 ### Autor

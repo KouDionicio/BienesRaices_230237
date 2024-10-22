@@ -9,7 +9,8 @@ Para poder demostrar y aprender la creación y consumo de Interfaces de Programa
 ## Historial de Prácticas
  |No.|Fecha|Descripción|Potenciador| Estatus| 
  |--|--|--|--|--|
- |8.|17/10/24|Repositorio del Proyecto Implementando .gitignore|1|Activa|
+ |8.|17/10/24|Repositorio del Proyecto Implementando .gitignore|1|Finalizada|
+ |9.|22/10/24|Creación de uuna Aplicación Web usando Express|11|Activa|
  
  
 

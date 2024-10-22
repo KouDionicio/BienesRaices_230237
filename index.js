@@ -8,7 +8,7 @@
 import express from 'express';
 const app = express();
 
-const port = 3000; //? configuramos nuestro servidor web
+const port = 3000; //? configuramos nuestro servidor web,
 
 app.listen(port, ()=>{
   console.log(`La aplicación ha iniciado en el puerto: ${port}`)

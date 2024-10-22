@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "Proyecto de Clase para la Unidad 2, de la asignatura AWOS utilizando Node.js",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "saluda": "node saluda.js",
+    "server": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -31,5 +33,8 @@
   "homepage": "https://github.com/KouDionicio/BienesRaices_230237#readme",
   "dependencies": {
     "express": "^4.21.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
   }
 }

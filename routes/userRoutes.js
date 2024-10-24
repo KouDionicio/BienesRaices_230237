@@ -1,5 +1,5 @@
-import express, { request, response, Router } from 'express';
-
+import express, { application, request, response, Router } from 'express';
+import { formularioLogin, formularioRegister, formularioPasswordRecovery } from '../controllers/userController.js';
 const router = express.Router();  
 
 
@@ -43,5 +43,20 @@ router.patch("/updatePassword/:email/:newPassword/:newPasswordConfirm",function(
 router.delete("/deleteUser/:email",function(req, res){
     res.send(`Se esta solicitando el borrado de toda información del usuario asociado al correo: ${req.params.email}`)
 })
+
+
+
+/*router.get("/login", function(req, res){  //este es una petición callback
+res.render('auth/login', {
+    autenticado: false
+  })
+});*/
+
+
+ router.get('/login', formularioLogin) //Middleware
+ router.get('/createAccount', formularioRegister) //Middleware
+ router.get('/passwordRecovery', formularioPasswordRecovery) //Middleware
+
+
 
 export default router; //?Esta palabra reservada de JS me permirte exportar los elementos que estan dentro de este archivo

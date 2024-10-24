@@ -11,6 +11,10 @@ import userRoutes from './routes/userRoutes.js';
 
 const app = express();
 
+//?Cofigurar Template Engine - PUG
+app.set('view engine', 'pug');
+app.set('views','./views');
+
 const port = 3000; //? configuramos nuestro servidor web,
 
 app.listen(port, ()=>{

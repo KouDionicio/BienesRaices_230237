@@ -8,6 +8,7 @@
 import express from 'express';
 import generalRoutes from './routes/generalRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import db from './db/config.js' //Conexion a la base de datos
 
 const app = express();
 
@@ -21,6 +22,12 @@ app.use(express.static('public'));
 //? Routing
 app.use('/auth', userRoutes);
 
+try{
+ await db.authenticate();
+ console.log("Conexion exitosa")
+}catch(error){
+
+}
 
 const port = 3000; //? configuramos nuestro servidor web,
 

@@ -13,11 +13,16 @@ block contenido
                 label.block.text-sm.uppercase.text-gray-300.mb-2.font-bold(for="nombre") Tu Nombre
                 input#nombre.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Tu Nombre" type="text" name="nombre")
               div 
-                label.block.text-sm.uppercase.text-gray-300.mb-2.font-bold(for="nombre") Email de Registro
-                input#nombre.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Tu Email" type="email" name="email")
+                label.block.text-sm.uppercase.text-gray-300.mb-2.font-bold(for="email") Email de Registro
+                input#email.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Tu Email @.com" type="email" name="email")
               div 
-                label.block.text-sm.uppercase.text-gray-300.mb-2.font-bold(for="nombre") Password
-                input#nombre.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Tu Password" type="password" name="password")
+                label.block.text-sm.uppercase.text-gray-300.mb-2.font-bold(for="password") Password
+                input#password.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Mínimo 8 carácteres" type="password" name="password")
               div 
-                label.block.text-sm.uppercase.text-gray-300.mb-2.font-bold(for="nombre") Confirme Contraseña
-                input#nombre.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Tu Nombre" type="text" name="nombre")
+                label.block.text-sm.uppercase.text-gray-300.mb-2.font-bold(for="nombre") Confirme Password
+                input#password-confirm.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Mínimo 8 carácteres, igual que la anterior" type="password" name="password2")
+
+              .flex.items-center.justify-between 
+                a.text-gray-500-text-xs(href="/auth/login" class="hover:underline hover:decoration-2 hover:decoration-red-600") ¿Ya tienes Cuenta? Inicia Sesión 
+                a.text-gray-500-text-xs(href="/auth/passwordRecovery" class="hover:underline decoration-2 hover:decoration-red-600") Olvide mi Contraseña...
+              input(class="w-full bg-indigo-300 hover:bg-red-300  text-white font-bold py-3 cursor-pointer" type="submit" value="Crear Cuenta")

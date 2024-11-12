@@ -1,6 +1,6 @@
 import Sequelize from "sequelize";
 
-const db= new Sequelize('bienes_raices_230237', 'Citlalli_Dionicio',"pass123",{
+const db= new Sequelize('bienes_raices_230237', 'Citlalli.Dionicio',"pass123",{
     host: 'localhost',
     port: 3307,
     dialect: 'mysql',

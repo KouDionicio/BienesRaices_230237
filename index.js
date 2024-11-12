@@ -23,9 +23,14 @@ app.use(express.static('public'));
 app.use('/auth', userRoutes);
 
 try{
- await db.authenticate();
- console.log("Conexion exitosa")
+
+  await db.authenticate();
+  db.sync();
+  console.log("Conexion exitosa");
+
 }catch(error){
+
+  console.log("Error");
 
 }
 

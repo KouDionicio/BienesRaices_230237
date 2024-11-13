@@ -11,6 +11,7 @@ import userRoutes from './routes/userRoutes.js';
 import db from './db/config.js' //Conexion a la base de datos
 
 const app = express();
+app.use(express.urlencoded({extended:true})); //habilita la lectura de datos en los formularios
 
 //? Cofigurar Template Engine - PUG
 app.set('view engine', 'pug');
@@ -23,14 +24,10 @@ app.use(express.static('public'));
 app.use('/auth', userRoutes);
 
 try{
-
-  await db.authenticate();
-  db.sync();
-  console.log("Conexion exitosa");
-
+ await db.authenticate();
+ db.sync(); //Crea tablas
+ console.log("Conexion exitosa")
 }catch(error){
-
-  console.log("Error");
 
 }
 

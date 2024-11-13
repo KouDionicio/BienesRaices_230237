@@ -1,5 +1,5 @@
-import express, { application, request, response, Router } from 'express';
-import { formularioLogin, formularioRegister, formularioPasswordRecovery } from '../controllers/userController.js';
+import express from 'express';
+import { formularioLogin, formularioRegister, formularioPasswordRecovery , registrar} from '../controllers/userController.js';
 const router = express.Router();  
 
 
@@ -56,6 +56,7 @@ res.render('auth/login', {
  router.get('/login', formularioLogin) //Middleware
  router.get('/createAccount', formularioRegister) //Middleware
  router.get('/passwordRecovery', formularioPasswordRecovery) //Middleware
+ router.post('/createAccount', registrar);
 
 
 

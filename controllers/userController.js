@@ -1,5 +1,9 @@
 import Usuario from '../models/Usuario.js'
 import { check, validationResult} from 'express-validator'
+import { generatedId } from '../db/helpers/tokens.js';
+import { response } from 'express';
+import { emailRegistro } from '../db/helpers/email.js';
+
 
 const formularioLogin = (req, res) =>{
     res.render('auth/login', {
@@ -40,8 +44,22 @@ const registrar = async (req, res) =>{
     } 
     
     const{ nombre: nombre, email: email, password: password} = req.body;
+    
+    //? Problemas aqui
+    const usuario = await Usuario.create({
+        nombre,
+        email,
+        password,
+        token: generatedId()
+    })
 
-
+    emailRegistro({
+        nombre: usuario.nombre,
+        email: usuario.email,
+        token: usuario.token
+    }) //? hasta aca
+ 
+    
     //verifica que ell usuario no existe en la base de datos
     const existingUser= await Usuario.findOne({where: {email}});
     console.log(existingUser);
@@ -60,9 +78,15 @@ const registrar = async (req, res) =>{
         const nuevoUsuario = await Usuario.create({
             nombre: nombre,
             email: email,
-            password: password
+            password: password,
+            token: generatedId()
         })
-        res.json(nuevoUsuario);
+        //res.json(nuevoUsuario);
+
+        response.render('templates/message',{
+            page: 'Cuenta creada satisfactoriamente',
+            msg: 'Se ha enviado un correro a : <poner el correo aqui>, para la confirmación de cuenta'
+        })
     }
     return;
     

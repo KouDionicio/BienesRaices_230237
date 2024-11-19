@@ -102,7 +102,7 @@ const registrar = async (req, res) =>{
 const confirm = async(req, res)=>{
 
     const {token} = req.params
-    //const user = await UserActivation.findOne({where: {token}})
+    const user = await UserActivation.findOne({where: {token}})
 
     if(userWithToken){
         

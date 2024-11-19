@@ -3,6 +3,8 @@ import { check, validationResult} from 'express-validator'
 import { generatedId } from '../db/helpers/tokens.js';
 import { response } from 'express';
 import { emailRegistro } from '../db/helpers/email.js';
+import { where } from 'sequelize';
+import csrf from 'csrf';
 
 
 const formularioLogin = (req, res) =>{
@@ -12,8 +14,12 @@ const formularioLogin = (req, res) =>{
 };
 
 const formularioRegister = (req, res) =>{
+
+    //console.log(req.csrfToken())
+
     res.render('auth/register', {
-       page: "Crea una nueva Cuenta..."
+       page: 'Crea una nueva Cuenta...',
+       csrfToken: req.csrfToken()
     })
 };
 
@@ -22,6 +28,7 @@ const formularioPasswordRecovery = (req, res) =>{
        
     })
 };
+
 
 const registrar = async (req, res) =>{
     await check('nombre').notEmpty().withMessage('El nombre no puede ir vacio').run(req);
@@ -92,9 +99,37 @@ const registrar = async (req, res) =>{
     
 }
 
+const confirm = async(req, res)=>{
+
+    const {token} = req.params
+    //const user = await UserActivation.findOne({where: {token}})
+
+    if(userWithToken){
+        
+        res.render('templates/message',{
+            page: 'El token no existe',
+            msg: 'Por favor verifica la liga',
+            error: true
+        })
+        
+    }else{
+        userWithToken.token= null
+        userWithToken.confirm=true
+        await userWithToken.save();
+
+        res.render('auth/createConfirm',{
+            page: 'Excelente',
+            msg: 'Tu cuenta ha sido confirmada de manera existosa',
+            error: false
+        })
+    }
+}
+
+
 export{
     formularioLogin,
     formularioRegister,
     formularioPasswordRecovery,
-    registrar
+    registrar,
+    confirm
 };

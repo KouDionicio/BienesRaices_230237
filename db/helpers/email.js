@@ -1,4 +1,6 @@
 import nodemailer from 'nodemailer'
+import dotenv from 'dotenv'
+dotenv.config({path: '.env'});
 
 const emailRegistro = async(datos) =>{
    
@@ -23,7 +25,7 @@ const emailRegistro = async(datos) =>{
      <p>Hola ${nombre}, comprueba tu cuenta en BienesRaices.com</p>
 
      <p>Tu cuenta ya esta lista, solo debes confirmarlo en el siguiente enlace: 
-     <a href=""> Confirmar cuenta </a></p>
+     <a href="${process.env.BACKEND_DOMAIN}:${process.env.BACKEND_PORT} /auth/createConfirm/${token}"> Confirmar cuenta </a></p>
 
      <p>Si tu no creaste esta cuenta, puedes ignorar el mensaje </p>
 

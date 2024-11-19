@@ -9,8 +9,20 @@ import express from 'express';
 import generalRoutes from './routes/generalRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import db from './db/config.js' //Conexion a la base de datos
+import csrf from 'csurf'
+import cookieParser  from 'cookie-parser'
 
 const app = express();
+
+//? Habilitar cookie parser
+app.use( cookieParser())
+
+//? Habilitar CSRF
+app.use( csrf({cookie: true}))
+
+
+
+
 app.use(express.urlencoded({extended:true})); //habilita la lectura de datos en los formularios
 
 //? Cofigurar Template Engine - PUG

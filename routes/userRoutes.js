@@ -1,5 +1,5 @@
 import express from 'express';
-import { formularioLogin, formularioRegister, formularioPasswordRecovery , registrar} from '../controllers/userController.js';
+import { formularioLogin, formularioRegister, formularioPasswordRecovery , registrar, confirm} from '../controllers/userController.js';
 const router = express.Router();  
 
 
@@ -57,6 +57,7 @@ res.render('auth/login', {
  router.get('/createAccount', formularioRegister) //Middleware
  router.get('/passwordRecovery', formularioPasswordRecovery) //Middleware
  router.post('/createAccount', registrar);
+ router.get('/createConfirm/:token', confirm);
 
 
 

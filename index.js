@@ -46,7 +46,7 @@ app.listen(port, ()=>{
 
 //? Enrutamiento para peticiones
 app.use('/',generalRoutes); //? Routing - Enrutamiento para peticiones
-app.use('/usuario/',userRoutes);  //?usar rutas diferentes, no nos marcara error pero solo nos leera la primera que encuentre
+app.use('/auth/',userRoutes);  //?usar rutas diferentes, no nos marcara error pero solo nos leera la primera que encuentre
 
 
 //Routing

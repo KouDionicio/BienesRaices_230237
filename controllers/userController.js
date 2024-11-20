@@ -3,8 +3,8 @@ import { check, validationResult} from 'express-validator'
 import { generatedId } from '../db/helpers/tokens.js';
 import { response } from 'express';
 import { emailRegistro } from '../db/helpers/email.js';
-import { where } from 'sequelize';
-import csrf from 'csrf';
+//import { where } from 'sequelize';
+//import csrf from 'csrf';
 
 
 const formularioLogin = (req, res) =>{
@@ -25,7 +25,7 @@ const formularioRegister = (req, res) =>{
 
 const formularioPasswordRecovery = (req, res) =>{
     res.render('auth/passwordRecovery', {
-       
+       page: 'Recuperar Contraseña'
     })
 };
 
@@ -46,27 +46,15 @@ const registrar = async (req, res) =>{
             usuario: {
                 nombre: req.body.nombre,
                 email: req.body.email
-            }
+            },
+            csrfToken: req.csrfToken()
         })
     } 
     
     const{ nombre: nombre, email: email, password: password} = req.body;
     
-    //? Problemas aqui
-    const usuario = await Usuario.create({
-        nombre,
-        email,
-        password,
-        token: generatedId()
-    })
 
-    emailRegistro({
-        nombre: usuario.nombre,
-        email: usuario.email,
-        token: usuario.token
-    }) //? hasta aca
- 
-    
+
     //verifica que ell usuario no existe en la base de datos
     const existingUser= await Usuario.findOne({where: {email}});
     console.log(existingUser);
@@ -80,34 +68,41 @@ const registrar = async (req, res) =>{
             }
         })
     }else{
-        console.log("Regsitrando a un nuevo usuario");
+        console.log("Registrando a un nuevo usuario");
 
-        const nuevoUsuario = await Usuario.create({
-            nombre: nombre,
-            email: email,
-            password: password,
-            token: generatedId()
-        })
-        //res.json(nuevoUsuario);
+        //? Almacenar un usuario
+        const usuario = await Usuario.create({
+        nombre,
+        email,
+        password,
+        token: generatedId()
+        });
 
-        response.render('templates/message',{
-            page: 'Cuenta creada satisfactoriamente',
-            msg: 'Se ha enviado un correro a : <poner el correo aqui>, para la confirmación de cuenta'
-        })
+        //? Envia un email de confirmación
+        emailRegistro({
+        nombre: usuario.nombre,
+        email: usuario.email,
+        token: usuario.token
+        }) 
     }
-    return;
     
+    //? Mostarr mensajes de confirmación
+    res.render('templates/message',{
+        page: 'Cuenta creada satisfactoriamente',
+        msg: `${email}`
+    })
+        
 }
 
 const confirm = async(req, res)=>{
 
     const {token} = req.params
-    const user = await UserActivation.findOne({where: {token}})
+    const userWithToken = await Usuario.findOne({where: {token}})
 
-    if(userWithToken){
+    if(!userWithToken){
         
-        res.render('templates/message',{
-            page: 'El token no existe',
+        res.render('auth/createConfirm',{
+            page: 'El token no existe o ya fue utilizado',
             msg: 'Por favor verifica la liga',
             error: true
         })

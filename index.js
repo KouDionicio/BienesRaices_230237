@@ -14,39 +14,43 @@ import cookieParser  from 'cookie-parser'
 
 const app = express();
 
+//? Cofigurar Template Engine - PUG
+app.set('view engine', 'pug');
+app.set('views','./views');
+
+
+app.use(express.urlencoded({extended:true})); //habilita la lectura de datos en los formularios
+
 //? Habilitar cookie parser
 app.use( cookieParser())
 
 //? Habilitar CSRF
-app.use( csrf({cookie: true}))
-app.use(express.urlencoded({extended:true})); //habilita la lectura de datos en los formularios
+app.use(csrf({cookie: true}))
 
+
+//? Carpeta publica
+app.use(express.static('public'));
 
 try{
   await db.authenticate();
   db.sync(); //Crea tablas
   console.log("Conexion exitosa")
- }catch(error){
+}catch(error){
  
- }
-
-
-//? Cofigurar Template Engine - PUG
-app.set('view engine', 'pug');
-app.set('views','./views');
-
-//? Carpeta publica
-app.use(express.static('public'));
+}
 
 const port = 3000; //? configuramos nuestro servidor web,
+
+
+
+//? Enrutamiento para peticiones
+app.use('/',generalRoutes); //? Routing - Enrutamiento para peticiones
+app.use('/auth/',userRoutes);  //?usar rutas diferentes, no nos marcara error pero solo nos leera la primera que encuentre
 
 app.listen(port, ()=>{
   console.log(`La aplicación ha iniciado en el puerto: ${port}`)
 })
 
-//? Enrutamiento para peticiones
-app.use('/',generalRoutes); //? Routing - Enrutamiento para peticiones
-app.use('/auth/',userRoutes);  //?usar rutas diferentes, no nos marcara error pero solo nos leera la primera que encuentre
 
 
 //Routing

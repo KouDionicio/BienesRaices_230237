@@ -3,6 +3,7 @@ import { check, validationResult} from 'express-validator'
 import { generatedId } from '../db/helpers/tokens.js';
 import { response } from 'express';
 import { emailRegistro } from '../db/helpers/email.js';
+import csrf from 'csurf'
 //import { where } from 'sequelize';
 //import csrf from 'csrf';
 
@@ -62,11 +63,12 @@ const registrar = async (req, res) =>{
     if(existingUser){
         return res.render('auth/register', {
             page: 'Crear una nueva cuenta',
+            csrfToken: req.csrfToken(),
             errores: [{msg: `El usuario con el correo ${email} ya esta registrado`}],
             usuario: {
                 nombre: nombre
             }
-        })
+                })
     }else{
         console.log("Registrando a un nuevo usuario");
 
@@ -89,6 +91,7 @@ const registrar = async (req, res) =>{
     //? Mostarr mensajes de confirmación
     res.render('templates/message',{
         page: 'Cuenta creada satisfactoriamente',
+        csrfToken: req.csrfToken(),
         msg: `${email}`
     })
         

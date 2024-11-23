@@ -1,15 +1,16 @@
 import express from 'express';
 import generalRoutes from './routes/generalRoutes.js';
 import userRoutes from './routes/userRoutes.js';
-import db from './db/config.js' // Conexión a la base de datos
+import db from './db/config.js'; // Conexión a la base de datos
+import Usuario from './models/Usuario.js'; // Modelo de la tabla
 import csrf from 'csurf';
-import cookieParser  from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 
 // Configurar el motor de plantillas - Pug
 app.set('view engine', 'pug');
-app.set('views','./views');
+app.set('views', './views');
 
 // Habilitar la lectura de datos del cuerpo
 app.use(express.urlencoded({ extended: true }));
@@ -27,10 +28,29 @@ app.use(express.static('public'));
 app.use('/', generalRoutes);
 app.use('/auth/', userRoutes);
 
+// Verificar conexión a la base de datos y sincronizar tablas
 const port = 3000;
-app.listen(port, () => {
-    console.log(`La aplicación ha iniciado en el puerto: ${port}`);
-});
+
+(async () => {
+    try {
+        // Verificar la conexión a la base de datos
+        await db.authenticate();
+        console.log('Conexión a la base de datos establecida correctamente.');
+
+        // Sincronizar el modelo con la base de datos
+        await Usuario.sync(); // Usa { alter: true } si deseas modificar estructuras existentes sin borrar datos
+        console.log('Tabla sincronizada (si no existía, fue creada).');
+
+        // Iniciar el servidor
+        app.listen(port, () => {
+            console.log(`La aplicación ha iniciado en el puerto: ${port}`);
+        });
+    } catch (error) {
+        console.error('Error al conectar con la base de datos o sincronizar tabla:', error);
+        process.exit(1); // Salir del proceso si ocurre un error crítico
+    }
+})();
+
 
 
 

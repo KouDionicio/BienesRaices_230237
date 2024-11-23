@@ -8,6 +8,14 @@ html(lang="es")
 
     body.min-h-screen.bg-gray-50
         main(class="mx-auto container mt-10 px-2")
-            header(class="mb-6")
-                // Aquí puedes agregar un contenido de encabezado, como un logo o navegación
+            header(class="mb-6 flex items-center justify-between")  // Utilizamos flex para alinear el logo y la navegación
+                    img(src="../public/assets/logo.png", alt="Logo de Bienes Raíces", class="h-10")  // Aquí puedes ajustar el tamaño con clases de TailwindCSS
+                // Puedes agregar más elementos en el header como la navegación aquí
+                nav
+                    ul(class="flex space-x-4")
+                        li
+                            a(href="/about") Acerca de
+                        li
+                            a(href="/contact") Contacto
             block contenido
+

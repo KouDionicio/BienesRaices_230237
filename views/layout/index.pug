@@ -1,21 +1,21 @@
 doctype html
 html(lang="es")
-    head
-        meta(charset="UTF-8")
-        meta(name="viewport", content="width=device-width, initial-scale=1.0")
-        link(rel="stylesheet", href="/css/app.css")
-        title Bienes Raíces | 230237 | #{page}
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    link(rel="stylesheet", href="/css/app.css")
+    title Bienes Raíces | 230237 | #{page}
 
-    body.min-h-screen.bg-gray-50
-        main(class="mx-auto container mt-10 px-2")
-            header(class="mb-6 flex items-center justify-between")  // Utilizamos flex para alinear el logo y la navegación
-                    img(src="../public/assets/logo.png", alt="Logo de Bienes Raíces", class="h-10")  // Aquí puedes ajustar el tamaño con clases de TailwindCSS
-                // Puedes agregar más elementos en el header como la navegación aquí
-                nav
-                    ul(class="flex space-x-4")
-                        li
-                            a(href="/about") Acerca de
-                        li
-                            a(href="/contact") Contacto
-            block contenido
+  body.min-h-screen.bg-gray-50
+    main(class="mx-auto container mt-10 px-2")
+      p(class="text-center text-xl") Bienvenido a Bienes Raíces
+      p(class="text-lg text-gray-600 mb-8 text-center") Nos complace acompañarte en el camino hacia la propiedad de tus sueños. Ya sea que estés buscando tu primer hogar, una inversión segura o el lugar ideal para tu familia, estamos aquí para ayudarte a encontrar la opción perfecta que se adapte a tus necesidades.
+      p(class="text-base text-gray-500 mb-4 text-center") En Bienes Raíces 230237, creemos que cada cliente es único, y trabajamos con dedicación para ofrecerte un servicio personalizado y de calidad. Nuestro equipo está comprometido en hacer que tu experiencia sea lo más sencilla y placentera posible.
+      p(class="text-lg font-semibold text-gray-700 text-center") ¡Explora nuestras opciones y encuentra el hogar que siempre has soñado!
 
+    header(class="mb-6")
+      .flex.items-center
+        img(src="/assets/logo.png", alt="Logo de Bienes Raíces", class="h-10 mr-4")
+        h1.text-white.text-2xl.font-bold Bienes Raíces
+
+    block contenido

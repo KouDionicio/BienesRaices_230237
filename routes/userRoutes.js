@@ -55,8 +55,8 @@ res.render('auth/login', {
 
  router.get('/login', formularioLogin) //Middleware
  router.get('/createAccount', formularioRegister) //Middleware
- router.get('/passwordRecovery', formularioPasswordRecovery) //Middleware
  router.post('/createAccount', registrar);
+ router.get('/passwordRecovery', formularioPasswordRecovery) //Middleware
  router.get('/createConfirm/:token', confirm);
 
 

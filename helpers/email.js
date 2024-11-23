@@ -1,5 +1,5 @@
-import nodemailer from 'nodemailer'
-import dotenv from 'dotenv'
+import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
 
 dotenv.config({ path: '.env' });
 
@@ -26,6 +26,8 @@ const emailRegistro = async (datos) => {
         <table style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #ddd;">
           <tr>
             <td style="background-color: #0056b3; padding: 20px; text-align: center;">
+              <!-- Logo de la empresa -->
+              <img src="../public/assets/logo.png" alt="BienesRaices.com Logo" style="max-width: 150px; margin-bottom: 10px;">
               <h2 style="color: white; margin: 0;">Bienvenido a BienesRaices.com</h2>
             </td>
           </tr>
@@ -53,6 +55,20 @@ const emailRegistro = async (datos) => {
           <tr>
             <td style="background-color: #ffffff; padding: 10px; text-align: center; font-size: 14px; color: #888888; border-top: 1px solid #ddd;">
               <p><strong>Bienes Raíces 230237</strong></p>
+              <!-- Firma digital (si es una firma textual) -->
+              <p style="color: #0056b3; font-style: italic;">Firma digital: <span style="color: #666;">Tu Firma Automática</span></p>
+              <!-- Iconos de redes sociales -->
+              <div style="text-align: center; margin-top: 10px;">
+                <a href="https://facebook.com/BienesRaices" target="_blank">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" style="width: 24px; margin: 0 10px;">
+                </a>
+                <a href="https://twitter.com/BienesRaices" target="_blank">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/6/60/Twitter_logo_2012.svg" alt="Twitter" style="width: 24px; margin: 0 10px;">
+                </a>
+                <a href="https://instagram.com/BienesRaices" target="_blank">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/9/95/Instagram_logo_2022.svg" alt="Instagram" style="width: 24px; margin: 0 10px;">
+                </a>
+              </div>
             </td>
           </tr>
         </table>
@@ -61,8 +77,8 @@ const emailRegistro = async (datos) => {
   });
 
   console.log(datos);
-}
+};
 
 export {
   emailRegistro
-}
+};

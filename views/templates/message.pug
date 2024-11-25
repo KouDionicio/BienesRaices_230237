@@ -1,14 +1,21 @@
 extends ../layout/index
 
 block contenido
-    input(type="hidden" name="_csrf" value=csrfToken)
     .py-10
-        h1.text-center.text-4xl.my-10.font-extrabold.text-cyan-300 Bienes
-            span.font-normal.text-black Raíces
-        h2.text-center.font-extrabold.text-2xl= page
-        center
-            span.text-xl.font-bold.text-center.my-10.text-red-600 Hemos enviado un correo a: 
-            span.text-xl.font-bold= msg
-            span.text-xl.font-bold.text-center.my-10.text-red-600 , para la confirmación de la cuenta
-        form(method='POST' action='/auth/createAccount' noValidate).space-y-5.px-6
-            input(type="hidden" name="_csrf" value=csrfToken)
+        h1.text-4xl.my-10.font-extrabold.text-center.text-cyan-500 Bienes
+            span.font-normal.text-gray-800 Raíces
+        h2.text-center.text-2xl.font-extrabold.text-sky-400= page
+    .mt-8.mx-auto.max-w-md
+        .bg-white.py-8.px-4.shadow.rounded-lg
+            if msg
+                p.text-xl.font-bold.text-center.my-10.text-morado
+                    | Hemos enviado un correo a: 
+                    span.font-semibold.text-morado= msg
+                    | , para la confirmación de la cuenta
+            else
+                p.text-xl.font-bold.text-center.my-10.text-morado No se pudo enviar el correo. Por favor, verifica tu dirección de email.
+                a.text-morado.text-sm(
+                    href="/auth/createAccount" 
+                    class="hover:underline hover:decoration-2 hover:text-cyan-500"
+                ) Volver al registro
+

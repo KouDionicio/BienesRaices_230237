@@ -1,13 +1,17 @@
 doctype html
 html(lang="es")
-    head
-        meta(charset="UTF-8")
-        meta(name="viewport", content="width=device-width, initial-scale=1.0")
-        link(rel="stylesheet", href="/css/app.css")
-        title Bienes Raíces | 230237 | #{page}
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    link(rel="shortcut icon", href="/assets/logo.png", type="image/x-icon")
+    link(rel="stylesheet", href="/css/app.css")
+    title Bienes Raíces | 230237 | #{page}
 
-    body.min-h-screen.bg-gray-50
-        main(class="mx-auto container mt-10 px-2")
-            header(class="mb-6")
-                // Aquí puedes agregar un contenido de encabezado, como un logo o navegación
-            block contenido
+  body.min-h-screen.bg-gray-50
+    main(class="mx-auto container mt-10 px-2")
+      p(class="text-center text-xl") Bienvenido a Bienes Raíces
+
+    header(class="mb-6")
+      .flex.items-center
+
+    block contenido

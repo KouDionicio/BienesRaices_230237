@@ -1,5 +1,5 @@
 import express from 'express';
-import { formularioLogin, formularioRegister, formularioPasswordRecovery , registrar, confirm} from '../controllers/userController.js';
+import { formularioLogin, formularioRegister, formularioPasswordRecovery , registrar, confirm, passwordReset, verifyToken, updatePassword } from '../controllers/userController.js';
 const router = express.Router();  
 
 
@@ -15,6 +15,7 @@ router.post("/newUser/:name/:email/:password",function(req, res){
     res.send(`Se esta solicitando crear un nuevo usuario con nombre: ${req.params.name}, asociado al email:
     ${req.params.email},con un password: ${req.params.password}`)
 })
+
 
 //? PUT se utiliza para actualizar totalmente los datos existentes del cliente al servidor 
 router.put("/replaceUserByEmail/:name/:email/:password",function(req, res){
@@ -56,9 +57,13 @@ res.render('auth/login', {
  router.get('/login', formularioLogin) //Middleware
  router.get('/createAccount', formularioRegister) //Middleware
  router.post('/createAccount', registrar);
+
  router.get('/passwordRecovery', formularioPasswordRecovery) //Middleware
  router.get('/createConfirm/:token', confirm);
-
+ router.post('/passwordRecovery', passwordReset);
+ //confirmar contraseña
+ router.get('/passwordRecovery/:token', verifyToken);
+ router.post('/passwordRecovery/:token', updatePassword);
 
 
 export default router; //?Esta palabra reservada de JS me permirte exportar los elementos que estan dentro de este archivo

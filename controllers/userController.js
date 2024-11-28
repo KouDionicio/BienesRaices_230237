@@ -106,11 +106,95 @@ const confirm = async (req, res) => {
     });
 };
 
+const passwordReset = async(request, response)=>{
+    console.log("Validando los datos para la recuperacion de la contraseña")
+
+    //validacion de los campos que se reciben del formulario
+    //validacion de frontend
+    await check('email').notEmpty().withMessage("El correro electronico es un campo obligatorio.").isEmail().withMessage("El correro electronico no tiene el formato de: usuario@dominio.extension").run
+    (request)
+    let result = validationResult(request)
+
+    //verificamos si hay errores de validacion
+    if(!result.isEmpty()){
+        return response.render('auth/passwordRecovery', {
+            page: 'Error al intentar resetear la contraseña',
+            error: result.array(),
+            csrfToken: request.csrfToken()
+        })
+    }
+
+    //Desestructurar los parametros del request
+    const {correro_usuario:email} = request.body
+
+    //validacion de Backend
+    //verificar que el usuario no existe previamente en la bd
+    const existingUser = await User.findOne({where: {email, confirm:1}})
+
+    if(!existingUser){
+        return response.render('auth/passwordRecovery',{
+            page: 'Error no existe una cuenta autentificada asociada al correo electronico ingresado',
+            csrfToken: request.csrfToken(),
+            error: [{msg: `Por favor revisa los datos e intentalo de nuevo`}],
+            user:{
+                email: email
+            }
+           
+        })
+    }
+
+    console.log("El usuario si existe en la BD");
+    //registramos los datos en la bd
+    existingUser.password = "";
+    existingUser.token = generatedId();
+    existingUser.save();
+
+
+    //enviar el correo de confirmacion
+    emailChangePassword({
+        name: existingUser.name,
+        email: existingUser.email,
+        token: existingUser.token
+    })
+
+    response.render('templates/message',{
+        page: 'Cuenta creada satisfactoriamente',
+        
+    })
+
+}
+
+const verifyToken = async (req, res) =>{
+    const {token} = req.params;
+    const userTokenOwner = await User.findOne({where: {token}})
+
+    if(!userTokenOwner){
+        return response.render('templates/message',{
+            page: 'Lo siento este token este ya no esta disponible',
+            csrfToken: request.csrfToken(),
+            msg: 'El token ha expirado o no existe',
+            
+           
+        })
+    }
+    
+    res.render('auth/resetPassword',{
+
+    })
+}
+
+const updatePassword = async (req, res) =>{
+    return 0;
+}
+
 export {
     formularioLogin,
     formularioRegister,
     formularioPasswordRecovery,
     registrar,
-    confirm
+    confirm,
+    passwordReset,
+    verifyToken,
+    updatePassword
 };
 

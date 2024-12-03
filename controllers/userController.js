@@ -3,51 +3,52 @@ import { check, validationResult } from 'express-validator';
 import { generatedId } from '../helpers/tokens.js';
 import { emailRegistro } from '../helpers/email.js';
 import csrf from 'csurf';
+import { request, response } from 'express';
 
-const formularioLogin = (req, res) => {
-    res.render('auth/login', { autenticado: false });
+const formularioLogin = (request, res) => {
+    response.render('auth/login', { autenticado: false });
 };
 
-const formularioRegister = (req, res) => {
+const formularioRegister = (request, response) => {
     // renderiza el formulario de registro con el CSRF token
-    res.render('auth/register', {
+    response.render('auth/register', {
         page: 'Crea una nueva Cuenta...',
-        csrfToken: req.csrfToken()
+        csrfToken: request.csrfToken()
     });
 };
 
-const formularioPasswordRecovery = (req, res) => {
+const formularioPasswordRecovery = (request, res) => {
     res.render('auth/passwordRecovery', { page: 'Recuperar Contraseña' });
 };
 
-const registrar = async (req, res) => {
+const registrar = async (request, response) => {
     // Validar campos usando express-validator
-    await check('nombre').notEmpty().withMessage('El nombre no puede ir vacío').run(req);
-    await check('email').isEmail().withMessage('El correo electrónico es un campo obligatorio').run(req);
-    await check('password').notEmpty().withMessage('La contraseña es un campo obligatorio').isLength({ min: 8 }).withMessage('La contraseña debe ser de al menos 8 caracteres').run(req);
-    await check('password2').equals(req.body.password).withMessage('Las contraseñas no coinciden').run(req);
+    await check('nombre').notEmpty().withMessage('El nombre no puede ir vacío').run(request);
+    await check('email').isEmail().withMessage('El correo electrónico es un campo obligatorio').run(request);
+    await check('password').notEmpty().withMessage('La contraseña es un campo obligatorio').isLength({ min: 8 }).withMessage('La contraseña debe ser de al menos 8 caracteres').run(request);
+    await check('password2').equals(request.body.password).withMessage('Las contraseñas no coinciden').run(request);
     
-    let resultado = validationResult(req);
+    let resultado = validationResult(request);
     
     if (!resultado.isEmpty()) {
-        return res.render('auth/register', {
+        return response.render('auth/register', {
             page: 'Crear una nueva cuenta',
             errores: resultado.array(),
             usuario: {
-                nombre: req.body.nombre,
-                email: req.body.email
+                nombre: request.body.nombre,
+                email: request.body.email
             },
-            csrfToken: req.csrfToken()
+            csrfToken: request.csrfToken()
         });
     }
     
-    const { nombre, email, password } = req.body;
+    const { nombre, email, password } = request.body;
 
     // Verificar si el usuario ya existe
     const existingUser = await Usuario.findOne({ where: { email } });
 
     if (existingUser) {
-        return res.render('auth/register', {
+        return response.render('auth/register', {
             page: 'Crear una nueva cuenta',
             csrfToken: req.csrfToken(),
             errores: [{ msg: `El usuario con el correo ${email} ya está registrado` }],
@@ -70,17 +71,17 @@ const registrar = async (req, res) => {
         });
 
         // Renderizar mensaje de éxito
-        res.render('templates/message', {
+        response.render('templates/message', {
             page: 'Cuenta creada satisfactoriamente',
-            csrfToken: req.csrfToken(),
+            csrfToken: request.csrfToken(),
             msg: `${email}`
         });
         
     }
 };
 
-const confirm = async (req, res) => {
-    const { token } = req.params;
+const confirm = async (request, response) => {
+    const { token } = request.params;
 
     // Buscar al usuario con el token proporcionado
     const userWithToken = await Usuario.findOne({ where: { token } });
@@ -99,7 +100,7 @@ const confirm = async (req, res) => {
     await userWithToken.save();
 
     // Renderiza mensaje de confirmación
-    res.render('auth/createConfirm', {
+    response.render('auth/createConfirm', {
         page: 'Excelente',
         msg: 'Tu cuenta ha sido confirmada de manera exitosa',
         error: false
@@ -164,27 +165,42 @@ const passwordReset = async(request, response)=>{
 
 }
 
-const verifyToken = async (req, res) =>{
-    const {token} = req.params;
-    const userTokenOwner = await User.findOne({where: {token}})
+const verifyToken = async (request, response) =>{
+    const {token} = request.params;
+    const userTokenOwner = await Usuario.findOne({where: {token}})
 
     if(!userTokenOwner){
-        return response.render('templates/message',{
-            page: 'Lo siento este token este ya no esta disponible',
-            csrfToken: request.csrfToken(),
-            msg: 'El token ha expirado o no existe',
+        return response.render('auth/resetPassword',{
+           page: 'Lo siento este token este ya no esta disponible',
+           csrfToken: request.csrfToken(),
+           msg: 'El token ha expirado o no existe',
             
            
         })
     }
     
-    res.render('auth/resetPassword',{
+    response.render('auth/resetPassword',{
+        csrfToken: request.csrfToken(),
+        page: 'Restablece tu contraseña',
+        msg: 'Por favor ingrese tu nueva contraseña'
 
     })
 }
 
-const updatePassword = async (req, res) =>{
-    return 0;
+const updatePassword = async(request, response) =>{
+    const {token} = request.params
+    await check('new_password').notEmpty().withMessage('La contraseña es un campo obligatorio').isLength({ min: 8 }).withMessage('La contraseña debe ser de al menos 8 caracteres').run(req);
+    await check('new_confirm_password').equals(req.body.new_password).withMessage('Las contraseñas no coinciden').run(request);
+
+    let resultado = validationResult(req);
+    if (!resultado.isEmpty()) {
+        return response.render('auth/resetPassword', {
+            page: 'Error al iniciar',
+            errores: resultado.array(),
+            csrfToken: request.csrfToken(),
+            token: token
+        });
+    }
 }
 
 export {

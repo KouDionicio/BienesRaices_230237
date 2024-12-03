@@ -80,10 +80,6 @@ const emailRegistro = async (datos) => {
   console.log(datos);
 };
 
-
-
-
-
 const emailChangePassword = async (datos) => {
 
   var transport = nodemailer.createTransport({

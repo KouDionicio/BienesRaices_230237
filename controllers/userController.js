@@ -1,11 +1,13 @@
 import Usuario from '../models/Usuario.js';
 import { check, validationResult } from 'express-validator';
+import bcrypt from 'bcrypt';
 import { generatedId } from '../helpers/tokens.js';
 import { emailRegistro } from '../helpers/email.js';
 import csrf from 'csurf';
 import { request, response } from 'express';
 
-const formularioLogin = (request, res) => {
+
+const formularioLogin = (request, response) => {
     response.render('auth/login', { autenticado: false });
 };
 
@@ -17,8 +19,8 @@ const formularioRegister = (request, response) => {
     });
 };
 
-const formularioPasswordRecovery = (request, res) => {
-    res.render('auth/passwordRecovery', { page: 'Recuperar Contraseña' });
+const formularioPasswordRecovery = (request, response) => {
+    response.render('auth/passwordRecovery', { page: 'Recuperar Contraseña' });
 };
 
 const registrar = async (request, response) => {
@@ -87,7 +89,7 @@ const confirm = async (request, response) => {
     const userWithToken = await Usuario.findOne({ where: { token } });
 
     if (!userWithToken) {
-        return res.render('auth/createConfirm', {
+        return response.render('auth/createConfirm', {
             page: 'El token no existe o ya fue utilizado',
             msg: 'Por favor verifica la liga',
             error: true
@@ -120,17 +122,17 @@ const passwordReset = async(request, response)=>{
     if(!result.isEmpty()){
         return response.render('auth/passwordRecovery', {
             page: 'Error al intentar resetear la contraseña',
-            error: result.array(),
-            csrfToken: request.csrfToken()
+            csrfToken: request.csrfToken(),
+            error: result.array()
         })
     }
 
     //Desestructurar los parametros del request
-    const {correro_usuario:email} = request.body
+    const {email} = request.body
 
     //validacion de Backend
     //verificar que el usuario no existe previamente en la bd
-    const existingUser = await User.findOne({where: {email, confirm:1}})
+    const existingUser = await Usuario.findOne({where: {email}})
 
     if(!existingUser){
         return response.render('auth/passwordRecovery',{
@@ -143,12 +145,10 @@ const passwordReset = async(request, response)=>{
            
         })
     }
-
     console.log("El usuario si existe en la BD");
     //registramos los datos en la bd
-    existingUser.password = "";
     existingUser.token = generatedId();
-    existingUser.save();
+    await existingUser.save();
 
 
     //enviar el correo de confirmacion
@@ -160,7 +160,7 @@ const passwordReset = async(request, response)=>{
 
     response.render('templates/message',{
         page: 'Cuenta creada satisfactoriamente',
-        
+        msg: 'Se envio un email con instrucciones'
     })
 
 }
@@ -170,37 +170,51 @@ const verifyToken = async (request, response) =>{
     const userTokenOwner = await Usuario.findOne({where: {token}})
 
     if(!userTokenOwner){
-        return response.render('auth/resetPassword',{
+        return response.render('auth/createConfirm',{
            page: 'Lo siento este token este ya no esta disponible',
-           csrfToken: request.csrfToken(),
            msg: 'El token ha expirado o no existe',
-            
-           
+           error: true
         })
     }
     
     response.render('auth/resetPassword',{
         csrfToken: request.csrfToken(),
         page: 'Restablece tu contraseña',
-        msg: 'Por favor ingrese tu nueva contraseña'
+        msg: 'Por favor ingrese tu nueva contraseña',
+        csrfToken: request.csrfToken(),
 
     })
 }
 
 const updatePassword = async(request, response) =>{
-    const {token} = request.params
-    await check('new_password').notEmpty().withMessage('La contraseña es un campo obligatorio').isLength({ min: 8 }).withMessage('La contraseña debe ser de al menos 8 caracteres').run(req);
-    await check('new_confirm_password').equals(req.body.new_password).withMessage('Las contraseñas no coinciden').run(request);
+   
+    await check('new_password').notEmpty().withMessage('La contraseña es un campo obligatorio').isLength({ min: 8 }).withMessage('La contraseña debe ser de al menos 8 caracteres').run(request);
+    await check('new_confirm_password').equals(request.body.new_password).withMessage('Las contraseñas no coinciden').run(request);
 
-    let resultado = validationResult(req);
+    let resultado = validationResult(request);
+    
     if (!resultado.isEmpty()) {
         return response.render('auth/resetPassword', {
             page: 'Error al iniciar',
-            errores: resultado.array(),
             csrfToken: request.csrfToken(),
+            errores: resultado.array(),
             token: token
         });
     }
+    const {token} = request.params
+    const {password} = request.body
+
+    const usuario = await Usuario.findOne({where: {token}})
+    const salt = await bcrypt.genSalt(10);
+    usuario.password = await bcrypt.hash(password, salt)
+    usuario.token = null;
+
+    await usuario.save();
+
+    response.render('auth/createConfirm',{
+        page: 'La contraseña se reestablecio correctamente',
+        msg: 'La contraseña se actualizo correctamente'
+    })
 }
 
 export {

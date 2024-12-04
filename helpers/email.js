@@ -115,7 +115,7 @@ const emailChangePassword = async (datos) => {
               <p style="font-size: 16px;">Tu cuenta está casi lista, solo necesitamos que confirmes tu dirección de correo electrónico para asegurarnos de que todo está correcto y que eres tú quien está registrando la cuenta.</p>
               <p style="font-size: 16px;">Haz clic en el siguiente enlace para reestablecer tu contraseña:</p>
               <p style="text-align: center;">
-                <a href="${process.env.BACKEND_DOMAIN}:${process.env.BACKEND_PORT}/auth/reserPassword/${token}" style="background-color: #28a745; color: white; padding: 10px 20px; font-size: 16px; text-decoration: none; border-radius: 5px;">Confirmar cuenta</a>
+                <a href="${process.env.BACKEND_DOMAIN}:${process.env.BACKEND_PORT}/auth/resetPassword/${token}" style="background-color: #28a745; color: white; padding: 10px 20px; font-size: 16px; text-decoration: none; border-radius: 5px;">Confirmar cuenta</a>
               </p>
               <p style="font-size: 16px;">Si no solicitaste esta cuenta, por favor ignora este correo. No se realizarán cambios en tu cuenta.</p>
               <p style="font-size: 16px;">Una vez confirmada tu cuenta, podrás empezar a explorar propiedades disponibles, crear alertas personalizadas y contactar a nuestros agentes inmobiliarios para obtener más detalles sobre las propiedades que te interesen.</p>

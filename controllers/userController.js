@@ -6,7 +6,10 @@ import { emailRegistro, emailChangePassword } from '../helpers/email.js';
 import { request, response } from 'express';
 
 const formularioLogin = (request, response) => {
-    response.render('auth/login', { autenticado: false });
+    response.render('auth/login', {
+        page: "Ingresa a la plataforma",
+        csrfToken: request.csrfToken()
+    });
 };
 
 const formularioRegister = (request, response) => {
@@ -55,7 +58,7 @@ const registrar = async (request, response) => {
         return response.render('auth/register', {
             page: 'Crear una nueva cuenta',
             csrfToken: request.csrfToken(),
-            errores: [{ msg: `El usuario con el correo ${email} ya está registrado` }],
+            error: [{ msg: `El usuario con el correo ${email} ya está registrado` }],
             usuario: { nombre }
         });
     } else {
@@ -119,14 +122,14 @@ const passwordReset = async (request, response) => {
     await check('email').notEmpty().withMessage("El correo electrónico es un campo obligatorio.")
         .isEmail().withMessage("El correo electrónico no tiene el formato correcto.").run(request);
 
-    let result = validationResult(request);
+    let resultado = validationResult(request);
 
     // Verificamos si hay errores de validación
-    if (!result.isEmpty()) {
+    if (!resultado.isEmpty()) {
         return response.render('auth/passwordRecovery', {
             page: 'Error al intentar resetear la contraseña',
             csrfToken: request.csrfToken(),
-            error: result.array()
+            errores: resultado.array()
         });
     }
 
@@ -182,8 +185,7 @@ const verifyToken = async (request, response) => {
     response.render('auth/resetPassword', {
         csrfToken: request.csrfToken(),
         page: 'Restablece tu Contraseña',
-        msg: 'Por favor ingresa tu nueva contraseña',
-        csrfToken: request.csrfToken()
+        msg: 'Por favor ingresa tu nueva contraseña'
     });
 };
 
@@ -232,6 +234,56 @@ const updatePassword = async (request, response) => {
     });
 };
 
+const userAuthentication = async (request, response) =>{
+//Revisar que exista la cuenta
+console.log("El usuario intenta ingresar")
+
+const {email: email, password: password} = request.body;
+console.log(`El usuario esta intentando acceder ${email} y la contraseña ${password}`);
+
+//Validar datos desde front
+await check('email').isEmail().withMessage('El correo electrónico es un campo obligatorio').run(request);
+await check('password').notEmpty().withMessage('La contraseña es un campo obligatorio').isLength({ min: 8 }).withMessage('La contraseña debe ser de al menos 8 caracteres').run(request);
+let resultado = validationResult(request)
+
+if(!resultado.isEmpty()){
+    return response.render('auth/login', {
+        page: 'Login',
+        errores: resultado.array(),
+        csrfToken: request.csrfToken()
+    });
+    
+}
+
+const existingUser = await Usuario.findOne({where: {email}})
+
+if(!existingUser){
+    return response.render('auth/login',{
+        page: 'Login',
+        csrfToken: request.csrfToken(),
+        error: [{msg: `Error, no existe el usuario`}]
+    })
+}
+
+//Verificar que la cuenta este confirmada
+if(existingUser.confirm){
+    return response.render('auth/login',{
+        page: 'Login',
+        csrfToken: request.csrfToken(),
+        error: [{msg: `Por favor revisa tu correo electronico y confirma tu cuenta`}]
+    })
+}else{
+    if(!existingUser.passwordVerify(password)){
+        return response.render('auth/login',{
+            page: 'Login',
+            csrfToken: request.csrfToken(),
+            error: [{msg: `La contraseña es incorrecta`}]
+        }) 
+    }
+}
+return 0;
+}
+
 export {
     formularioLogin,
     formularioRegister,
@@ -240,5 +292,6 @@ export {
     confirm,
     passwordReset,
     verifyToken,
-    updatePassword
+    updatePassword,
+   userAuthentication
 };

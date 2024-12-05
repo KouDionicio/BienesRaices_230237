@@ -63,8 +63,8 @@ const emailRegistro = async (datos) => {
                 <a href="https://facebook.com/BienesRaices" target="_blank">
                   <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" style="width: 24px; margin: 0 10px;">
                 </a>
-                <a href="https://twitter.com/BienesRaices" target="_blank">
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/6/60/X_logo_2012.svg" alt="Twitter" style="width: 24px; margin: 0 10px;">
+                <a href="https://x.com/BienesRaices" target="_blank">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/6/60/X_logo_2012.svg" alt="X" style="width: 24px; margin: 0 10px;">
                 </a>
                 <a href="https://instagram.com/BienesRaices" target="_blank">
                   <img src="https://upload.wikimedia.org/wikipedia/commons/9/95/Instagram_logo_2022.svg" alt="Instagram" style="width: 24px; margin: 0 10px;">
@@ -140,8 +140,8 @@ const emailChangePassword = async (datos) => {
                 <a href="https://facebook.com/BienesRaices" target="_blank">
                   <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" style="width: 24px; margin: 0 10px;">
                 </a>
-                <a href="https://twitter.com/BienesRaices" target="_blank">
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/6/60/X_logo_2012.svg" alt="Twitter" style="width: 24px; margin: 0 10px;">
+                <a href="https://x.com/BienesRaices" target="_blank">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/6/60/X_logo_2012.svg" alt="X" style="width: 24px; margin: 0 10px;">
                 </a>
                 <a href="https://instagram.com/BienesRaices" target="_blank">
                   <img src="https://upload.wikimedia.org/wikipedia/commons/9/95/Instagram_logo_2022.svg" alt="Instagram" style="width: 24px; margin: 0 10px;">

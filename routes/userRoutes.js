@@ -62,8 +62,8 @@ res.render('auth/login', {
  router.get('/createConfirm/:token', confirm);
  router.post('/passwordRecovery', passwordReset);
  //confirmar contraseña
- router.get('/passwordRecovery/:token', verifyToken);
- router.post('/passwordRecovery/:token', updatePassword);
+ router.get('/resetPassword/:token', verifyToken);
+ router.post('/resetPassword/:token', updatePassword);
 
 
 export default router; //?Esta palabra reservada de JS me permirte exportar los elementos que estan dentro de este archivo

@@ -103,7 +103,7 @@ const confirm = async (request, response) => {
 
     // Desactivar el token y marcar al usuario como confirmado
     userWithToken.token = null;
-    userWithToken.confirm = true;
+    userWithToken.confirmado = true;
     await userWithToken.save();
 
     // Renderiza mensaje de confirmación
@@ -134,10 +134,10 @@ const passwordReset = async (request, response) => {
     }
 
     // Desestructuramos los parámetros del request
-    const { email } = request.body;
+    const { email: email } = request.body;
 
     // Validación de Backend: verificar que el usuario existe
-    const existingUser = await Usuario.findOne({ where: { email } });
+    const existingUser = await Usuario.findOne({ where: { email , confirmado:1} });
 
     if (!existingUser) {
         return response.render('auth/passwordRecovery', {
@@ -147,13 +147,12 @@ const passwordReset = async (request, response) => {
             user: { email: email }
         });
     }
-
-    console.log("El usuario sí existe en la BD");
     
     // Generar un nuevo token para la recuperación
     existingUser.password = "";
+    console.log(existingUser.password)
     existingUser.token = generatedId();
-    await existingUser.save();
+    existingUser.save();
 
     // Enviar el correo con instrucciones para resetear la contraseña
     emailChangePassword({
@@ -225,9 +224,9 @@ const updatePassword = async (request, response) => {
     usuario.password = await bcrypt.hash(new_password, salt);
     usuario.token = null;
 
-    await usuario.save();
-
-    response.render('auth/createConfirm', {
+    usuario.save();
+    
+    return response.render('auth/createConfirm', {
         page: 'Contraseña Restablecida',
         msg: 'La contraseña se actualizó correctamente.',
         csrfToken: request.csrfToken()
@@ -235,44 +234,37 @@ const updatePassword = async (request, response) => {
 };
 
 const userAuthentication = async (request, response) =>{
-//Revisar que exista la cuenta
-console.log("El usuario intenta ingresar")
+    await check('email').isEmail().withMessage('El correo electrónico es un campo obligatorio').run(request)
+    await check('password').notEmpty().withMessage('La contraseña es un campo obligatorio').isLength({ min: 8 }).withMessage('La contraseña debe ser de al menos 8 caracteres').run(request)
+    let resultado = validationResult(request)
 
-const {email: email, password: password} = request.body;
-console.log(`El usuario esta intentando acceder ${email} y la contraseña ${password}`);
+    if(!resultado.isEmpty()){
+        return response.render('auth/login', {
+            page: 'Login',
+            errores: resultado.array(),
+            csrfToken: request.csrfToken()
+        });
+    }
 
-//Validar datos desde front
-await check('email').isEmail().withMessage('El correo electrónico es un campo obligatorio').run(request);
-await check('password').notEmpty().withMessage('La contraseña es un campo obligatorio').isLength({ min: 8 }).withMessage('La contraseña debe ser de al menos 8 caracteres').run(request);
-let resultado = validationResult(request)
+    const {email, password} = request.body
+    const existingUser = await Usuario.findOne({where: {email}})
+    if(!existingUser){
+        return response.render('auth/login',{
+            page: 'Login',
+            csrfToken: request.csrfToken(),
+            error: [{msg: `Error, no existe una cuenta asociada al correo ${email}`}]
+        })
+    }
 
-if(!resultado.isEmpty()){
-    return response.render('auth/login', {
-        page: 'Login',
-        errores: resultado.array(),
-        csrfToken: request.csrfToken()
-    });
-    
-}
+    if(!existingUser.confirmado){
+        return response.render('auth/login',{
+            page: 'Login',
+            csrfToken: request.csrfToken(),
+            error: [{msg: `Por favor revisa tu correo electronico y confirma tu cuenta`}]
+        })
+    }
 
-const existingUser = await Usuario.findOne({where: {email}})
-
-if(!existingUser){
-    return response.render('auth/login',{
-        page: 'Login',
-        csrfToken: request.csrfToken(),
-        error: [{msg: `Error, no existe el usuario`}]
-    })
-}
-
-//Verificar que la cuenta este confirmada
-if(existingUser.confirm){
-    return response.render('auth/login',{
-        page: 'Login',
-        csrfToken: request.csrfToken(),
-        error: [{msg: `Por favor revisa tu correo electronico y confirma tu cuenta`}]
-    })
-}else{
+    console.log('Acceso La contraseña es incorrecta')
     if(!existingUser.passwordVerify(password)){
         return response.render('auth/login',{
             page: 'Login',
@@ -280,8 +272,12 @@ if(existingUser.confirm){
             error: [{msg: `La contraseña es incorrecta`}]
         }) 
     }
-}
-return 0;
+
+    console.log('Acceso exitoso')
+    return response.render('auth/login',{
+        page: 'Iniciar Sesión',
+        csrfToken: request.csrfToken
+    })
 }
 
 export {

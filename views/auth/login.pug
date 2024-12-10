@@ -6,6 +6,7 @@ block contenido
       span.font-normal Raices
     h2.text-center.text-2xl.font-extrabold.text-sky-400 Login
     
+    // Si hay errores, los mostramos
     if errores
       div.mx-auto.my-10.max-w-md
         each error in errores
@@ -24,6 +25,7 @@ block contenido
             div
               span.font-medium ¡Error!: 
               | #{error.msg}
+
     .mt-8.mx-auto.max-w-md
         .bg-white.py-8.px-4.shadow
             form(method="POST" action="/auth/login").space-y-5.px-6
@@ -45,4 +47,4 @@ block contenido
       setTimeout(() => {
         alerts.forEach(alert => alert.remove());
       }, 2000);
-    });      
+    });    

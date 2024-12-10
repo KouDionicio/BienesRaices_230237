@@ -1,7 +1,7 @@
 import Usuario from '../models/Usuario.js';
 import { check, validationResult } from 'express-validator';
 import bcrypt from 'bcrypt';
-import { generatedId } from '../helpers/tokens.js';
+import { generatedJWT,generatedId } from '../helpers/tokens.js';
 import { emailRegistro, emailChangePassword } from '../helpers/email.js';
 import { request, response } from 'express';
 
@@ -9,7 +9,7 @@ const formularioLogin = (request, response) => {
     response.render('auth/login', {
         page: "Ingresa a la plataforma",
         csrfToken: request.csrfToken()
-    });
+    })
 };
 
 const formularioRegister = (request, response) => {
@@ -233,52 +233,66 @@ const updatePassword = async (request, response) => {
     });
 };
 
-const userAuthentication = async (request, response) =>{
-    await check('email').isEmail().withMessage('El correo electrónico es un campo obligatorio').run(request)
-    await check('password').notEmpty().withMessage('La contraseña es un campo obligatorio').isLength({ min: 8 }).withMessage('La contraseña debe ser de al menos 8 caracteres').run(request)
-    let resultado = validationResult(request)
+const userAuthentication = async (request, response) => {
+    // Validación de los campos
+    await check('email').isEmail().withMessage('El correo electrónico es un campo obligatorio').run(request);
+    await check('password').notEmpty().withMessage('La contraseña es un campo obligatorio').isLength({ min: 8 }).withMessage('La contraseña debe ser de al menos 8 caracteres').run(request);
 
-    if(!resultado.isEmpty()){
+    let resultado = validationResult(request);
+
+    if (!resultado.isEmpty()) {
+        // Si hay errores, los mostramos en el login.pug
         return response.render('auth/login', {
             page: 'Login',
-            errores: resultado.array(),
+            errores: resultado.array(), // Asegúrate de usar "errores"
             csrfToken: request.csrfToken()
         });
     }
 
-    const {email, password} = request.body
-    const existingUser = await Usuario.findOne({where: {email}})
-    if(!existingUser){
-        return response.render('auth/login',{
+    const { email, password } = request.body;
+    
+    // Verificar si el usuario existe
+    const existingUser = await Usuario.findOne({ where: { email } });
+
+    if (!existingUser) {
+        // Si el usuario no existe, mostrar el error correspondiente
+        return response.render('auth/login', {
             page: 'Login',
             csrfToken: request.csrfToken(),
-            error: [{msg: `Error, no existe una cuenta asociada al correo ${email}`}]
-        })
+            errores: [{ msg: `Error, no existe una cuenta asociada al correo ${email}` }] // Usamos "errores" aquí también
+        });
     }
 
-    if(!existingUser.confirmado){
-        return response.render('auth/login',{
+    if (!existingUser.confirmado) {
+        // Si el usuario no está confirmado, mostrar el mensaje de confirmación
+        return response.render('auth/login', {
             page: 'Login',
             csrfToken: request.csrfToken(),
-            error: [{msg: `Por favor revisa tu correo electronico y confirma tu cuenta`}]
-        })
+            errores: [{ msg: `Por favor revisa tu correo electronico y confirma tu cuenta`}]
+        });
     }
 
-    console.log('Acceso La contraseña es incorrecta')
-    if(!existingUser.passwordVerify(password)){
-        return response.render('auth/login',{
+    // Verificar la contraseña
+    console.log('Acceso La contraseña es incorrecta');
+    if (!existingUser.passwordVerify(password)) {
+        return response.render('auth/login', {
             page: 'Login',
             csrfToken: request.csrfToken(),
-            error: [{msg: `La contraseña es incorrecta`}]
-        }) 
+            errores: [{ msg: 'La contraseña es incorrecta' }] // Usamos "errores" aquí también
+        });
     }
 
-    console.log('Acceso exitoso')
-    return response.render('auth/login',{
-        page: 'Iniciar Sesión',
-        csrfToken: request.csrfToken
-    })
+    // Si todo es correcto, generar el token y redirigir
+    const token = generatedJWT({ id: existingUser.id, developer_name: existingUser.nombre });
+    console.log(token);
+
+    // Redirigir a otra página (como /mypropeties) después de iniciar sesión correctamente
+    return response.cookie('_token', token, {
+        httpOnly: true,
+    }).redirect('/mis-propiedades'); // Notar que usamos redirect aquí
+
 }
+
 
 export {
     formularioLogin,
@@ -289,5 +303,5 @@ export {
     passwordReset,
     verifyToken,
     updatePassword,
-   userAuthentication
+    userAuthentication
 };

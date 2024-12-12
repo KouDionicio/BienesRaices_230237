@@ -243,37 +243,35 @@ const userAuthentication = async (request, response) => {
     await check('email').isEmail().withMessage('El correo electrónico es un campo obligatorio').run(request);
     await check('password').notEmpty().withMessage('La contraseña es un campo obligatorio').isLength({ min: 8 }).withMessage('La contraseña debe ser de al menos 8 caracteres').run(request);
 
-    let resultado = validationResult(request);
+    const resultado = validationResult(request);
 
     if (!resultado.isEmpty()) {
-        // Si hay errores, los mostramos en el login.pug
+        // Si hay errores, renderizar nuevamente la vista de login con los errores
         return response.render('auth/login', {
             page: 'Login',
             csrfToken: request.csrfToken(),
-            errores: resultado.array() // Asegúrate de usar "errores"
+            errores: resultado.array() // Errores se pasan aquí
         });
     }
 
     const { email, password } = request.body;
-    
+
     // Verificar si el usuario existe
     const existingUser = await Usuario.findOne({ where: { email } });
 
     if (!existingUser) {
-        // Si el usuario no existe, mostrar el error correspondiente
         return response.render('auth/login', {
             page: 'Login',
             csrfToken: request.csrfToken(),
-            errores: [{ msg: `Error, no existe una cuenta asociada al correo ${email}` }] // Usamos "errores" aquí también
+            errores: [{ msg: `Error, no existe una cuenta asociada al correo ${email}` }]
         });
     }
 
     if (!existingUser.confirmado) {
-        // Si el usuario no está confirmado, mostrar el mensaje de confirmación
         return response.render('auth/login', {
             page: 'Login',
             csrfToken: request.csrfToken(),
-            errores: [{ msg: `Por favor revisa tu correo electronico y confirma tu cuenta`}]
+            errores: [{ msg: `Por favor revisa tu correo electronico y confirma tu cuenta` }]
         });
     }
 
@@ -281,23 +279,25 @@ const userAuthentication = async (request, response) => {
     console.log('Contraseña ingresada:', password);
     if (!existingUser.passwordVerify(password)) {
         return response.render('auth/login', {
-           page: 'Login',
-           csrfToken: request.csrfToken(),
-           errores: [{ msg: 'La contraseña es incorrecta' }]
+            page: 'Login',
+            csrfToken: request.csrfToken(),
+            errores: [{ msg: 'La contraseña es incorrecta' }]
         });
     }
 
+    // Si todo es correcto, renderizar la vista admin.pug
+    console.log('Acceso concedido. Renderizando la vista de administrador.');
 
-    // Si todo es correcto, generar el token y redirigir
-    const token = generatedJWT({ id: existingUser.id, nombre: existingUser.nombre });
-    console.log(token);
+    // Renderizar admin.pug pasando datos del usuario si son necesarios
+    return response.render('auth/admin', {
+        page: 'Admin Dashboard',
+        usuario: {
+            nombre: existingUser.nombre,
+            email: existingUser.email
+        }
+    });
+};
 
-    // Redirigir a otra página (como /mypropeties) después de iniciar sesión correctamente
-    return response.cookie('_token', token, {
-        httpOnly: true,
-    }).redirect('/mis-propiedades'); // Notar que usamos redirect aquí
-
-}
 
 
 export {

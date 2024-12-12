@@ -14,7 +14,8 @@ Para poder demostrar y aprender la creación y consumo de Interfaces de Programa
  |10.|23/10/24|Operaciones Básicas de una API a tráves de los verbos HTTP|12|Finalizada|
  |11.|05/11/24|Implementación de las Pantallas de Registro de Logeo y Recuperación de Contraseña|13|Finalizada|
  |12.|07/11/24|Integración de Funcionalidad de Creación de Cuentas de Usuario|30|Finalizada|
- |13.|04/11/24|Implementación de la Funcionalidad de la Recuperación de la Contraseña|20|Activa|
+ |13.|04/12/24|Implementación de la Funcionalidad de la Recuperación de la Contraseña|20|Finalizada|
+ |14.|05/12/24|Autenticación de Usuarios|10|Finalizada|
  ### Tech Stack
  ![NodeJS](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white) ![Express](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
  

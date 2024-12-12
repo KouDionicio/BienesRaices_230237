@@ -38,7 +38,7 @@ const Usuario = db.define('tbb_users',{
 
 // Dentro del modelo Usuario (ejemplo con bcrypt)
 Usuario.prototype.passwordVerify = function(password) {
-    return bcrypt.compareSync(password, this.password);
+    return bcrypt.compare(password, this.password);
 };
 
 export default Usuario;
